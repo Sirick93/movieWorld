@@ -1,0 +1,168 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello HomeController!{% endblock %}
+
+{% block body %}
+<section id="movies">
+    <div class="alert-box">
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="title">
+                    <h1>Movie World</h1>
+                </div>
+            </div>
+            <div class="col-md-4">
+            
+                <div class="user-links">
+                    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                        Hello {{ app.user.name }}, <a href="{{ path('app_logout') }}">Logout</a>
+                    {% else %}
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">
+                            Log in
+                        </button>
+                        or 
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerModal">
+                            Sign Up
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-10">
+                <div class="movie-list">
+                    <div class="count">
+                       <p>Found {{ movies.getTotalItemCount }} movies</p>
+                    </div>
+                    {% for row in movies %}
+                        {% set movie = row[0] %}
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="movie-title">
+                                    <h5>{{ movie.title }}</h5>
+                                    <p>Posted {{ movie.createdAt|date('d/m/Y') }}</p>
+                                </div>
+                                <div class="movie-desc">
+                                    <p>{{ movie.description }}</p>
+                                </div>
+                                <div class="movie-stats">
+                                    <p>
+                                        👍<span id="likes"> {{ row.likes|default(0) }}</span> | 👎<span id="hates"> {{ row.hates|default(0) }}</span>
+                                    </p>
+                                    <p> 
+                                        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                                            <a type="button" id="like-btn" class="btn btn-primary" data-value="1" data-movie="{{movie.id}}" data-token="{{ csrf_token(app.user.id) }}">Like</a>
+                                            /
+                                            <a type="button" id="hate-btn" class="btn btn-primary" data-value="-1" data-movie="{{movie.id}}" data-token="{{ csrf_token(app.user.id) }}">Hate</a>
+                                            {% if movie.user.id == app.user.id %}
+                                                Posted by <a href="{{ path('', {'sort': 'm.createdAt', 'order': 'DESC', 'userId': app.user.id}) }}">You</a>
+                                            {% else %}
+                                                Posted by <a href="{{ path('', {'sort': 'm.createdAt', 'order': 'DESC', 'userId': movie.user.id}) }}">{{movie.user.name}}</a>
+                                            {% endif %}
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="pagination">
+                    {{ knp_pagination_render(movies) }}
+                </div>
+            </div>
+            <div class="col-md-2">
+                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                    <div class="movie-create-btn">
+                        <a href="{{path('add_movie')}}">New Movie</a>
+                    </div>
+                {% endif %}
+                <div class="sort-links">
+                    <a href="{{ path('', {'sort': 'likes', 'order': 'DESC'}) }}" class="btn btn-sm btn-outline-primary">Sort by Likes</a>
+                    <a href="{{ path('', {'sort': 'hates', 'order': 'DESC'}) }}" class="btn btn-sm btn-outline-danger">Sort by Hates</a>
+                    <a href="{{ path('', {'sort': 'm.createdAt', 'order': 'DESC'}) }}" class="btn btn-sm btn-outline-secondary">Sort by Date</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Login Modal -->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+        <form action="{{path('app_login')}}" method="post">
+      <div class="modal-header">
+        {% if error %}
+            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+        {% endif %}
+
+        {% if app.user %}
+            <div class="mb-3">
+                You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
+            </div>
+        {% endif %}
+
+        <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        
+            
+            <label for="username">Email</label>
+            <input type="email" value="{{ last_username }}" name="_username" id="username" class="form-control" autocomplete="email" required autofocus>
+            <label for="password">Password</label>
+            <input type="password" name="_password" id="password" class="form-control" autocomplete="current-password" required>
+            <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
+
+            {#
+                Uncomment this section and add a remember_me option below your firewall to activate remember me functionality.
+                See https://symfony.com/doc/current/security/remember_me.html
+
+                <div class="checkbox mb-3">
+                    <input type="checkbox" name="_remember_me" id="_remember_me">
+                    <label for="_remember_me">Remember me</label>
+                </div>
+            #}
+
+            
+        
+      </div>
+      <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button class="btn btn-lg btn-primary" type="submit">
+                    Sign in
+            </button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- Registration Modal -->
+<div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+        {{ form_errors(registrationForm) }}
+
+        {{ form_start(registrationForm) }}
+        <div class="modal-header">
+            <h1 class="modal-title fs-5" id="registerModalLabel">Register</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            {{ form_row(registrationForm.email) }}
+            {{ form_row(registrationForm.name) }}
+            {{ form_row(registrationForm.plainPassword, {
+                label: 'Password'
+            }) }}
+            {{ form_row(registrationForm.agreeTerms) }}
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            {{ form_row(registrationForm.sign_up) }}
+        </div>
+        {{ form_end(registrationForm) }}
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,12 @@
+body {
+    background-color: rgb(245, 245, 245) !important;
+}
+
+section#movies {
+    margin-top: 50px;
+}
+
+.alert-box {
+    display: none;
+    border-radius: 20px;
+}

@@ -1,0 +1,41 @@
+<?php
+// src/Controller/RegistrationController.php
+namespace App\Controller;
+
+// ...
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use App\Entity\User;
+use Symfony\Component\Routing\Attribute\Route;
+use App\Form\RegistrationFormType;
+use Symfony\Component\HttpFoundation\Request;
+
+class RegistrationController extends AbstractController
+{
+    #[Route('/register', name: 'app_register')]
+    public function create(Request $request, UserPasswordHasherInterface $passwordHasher): Response
+    {
+        $user = new User();
+        $form = $this->createForm(RegistrationFormType::class, $user);
+        
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            /*$password = $this->get('security.password_encoder')
+                ->encodePassword($user, $user->getPlainPassword());
+            $user->setPassword($password);*/
+            $hashedPassword = $passwordHasher->hashPassword(
+            $user,
+            $user->getPlainPassword()
+        );
+        $user->setPassword($hashedPassword);
+        $user->setRoles(["ROLE_USER"]);
+            // 4) save the User!
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($user);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('/');
+        }
+        
+    }
+}
