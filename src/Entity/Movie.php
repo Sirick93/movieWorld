@@ -35,8 +35,6 @@ class Movie
     #[ORM\OneToMany(targetEntity: Vote::class, mappedBy: 'movie', orphanRemoval: true)]
     private Collection $votes;
 
-    private ?int $userVote = null;
-
     public function __construct()
     {
         $this->votes = new ArrayCollection();
@@ -116,17 +114,6 @@ class Movie
             }
         }
 
-        return $this;
-    }
-    
-    public function getUserVote(): ?int
-    {
-        return $this->userVote;
-    }
-
-    public function setUserVote(?int $vote): self
-    {
-        $this->userVote = $vote;
         return $this;
     }
 }
