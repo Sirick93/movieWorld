@@ -21,7 +21,8 @@ class MovieRepository extends ServiceEntityRepository
     public function getMoviesWithVotesQuery(
         string $sortField = 'createdAt', 
         string $sortOrder = 'DESC',  
-        ?int $userId = null
+        ?int $userId = null,
+        ?int $currentUser = null
     )
     {   
         $qb = $this->createQueryBuilder('m')
@@ -33,6 +34,10 @@ class MovieRepository extends ServiceEntityRepository
             ->groupBy('m.id');
 
         if ($userId) {
+            $qb->andWhere('m.user = :user')
+            ->setParameter('user', $userId);
+        }
+        if ($currentUser) {
             // join with votes of the current user
             $qb->leftJoin(
                 'm.votes',
@@ -41,11 +46,11 @@ class MovieRepository extends ServiceEntityRepository
                 'uv.user = :currentUser'
             )
             ->addSelect('uv.value AS userVote')
-            ->setParameter('currentUser', $userId);
+            ->setParameter('currentUser', $currentUser);
         }
 
         // Validate sorting field
-        $allowedFields = ['createdAt', 'likes', 'hates', 'user'];
+        $allowedFields = ['createdAt', 'likes', 'hates'];
         if (!in_array($sortField, $allowedFields)) {
             $sortField = 'createdAt';
         }

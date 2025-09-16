@@ -19,12 +19,13 @@ final class HomeController extends AbstractController
     {
         $sortField = $request->query->get('sort', 'createdAt'); 
         $sortOrder = $request->query->get('order', 'DESC');
-        $userId = null;
+        $sortUserId = $request->query->get('userId');
+        $currentUser = null;
         if ($this->getUser()) {
-            $userId = $this->getUser()->getId();
+            $currentUser = $this->getUser()->getId();
         }
 
-        $query = $movieRepository->getMoviesWithVotesQuery($sortField, $sortOrder, $userId);
+        $query = $movieRepository->getMoviesWithVotesQuery($sortField, $sortOrder, $sortUserId, $currentUser);
 
         $movies = $paginator->paginate(
             $query,
