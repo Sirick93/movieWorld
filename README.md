@@ -11,6 +11,7 @@
   <li>Download Project</li>
   <li>composer install</li>
   <li>php bin/console importmap:install</li>
+  <li>npm install</li>
   <li>php bin/console doctrine:database:create</li>
   <li>php bin/console doctrine:migrations:migrate</li>
   <li>php bin/console doctrine:fixtures:load</li>
