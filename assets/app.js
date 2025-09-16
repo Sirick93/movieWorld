@@ -26,15 +26,20 @@ const initialize = () => {
             body: JSON.stringify({ value: value, movie: movie, csrfToken: csrfToken })
         })
         .then(response => {
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
-            }
             return response.json();
         })
         .then(data => {
+            if (data.error) {
+                $('.alert-box').show();
+                $('.alert-box').html('<div class="alert alert-danger">'+data.error+'</div>');
+                setTimeout(function() {
+                    $('.alert-box').fadeOut();
+                }, 5000);
+                return;
+            }
             //console.log(data);
-            $('#likes').text(data.likes);
-            $('#hates').text(data.hates);
+            $('#movie-'+movie+' #likes').text(data.likes);
+            $('#movie-'+movie+' #hates').text(data.hates);
             $('.alert-box').show();
             $('.alert-box').html('<div class="alert alert-primary">Movie rating '+data.action+'</div>');
             setTimeout(function() {

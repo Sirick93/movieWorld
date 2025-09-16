@@ -4,9 +4,15 @@
 
 {% block body %}
 <section id="movies">
+    {% for message in app.flashes('notice') %}
+        <div class="flash-notice">
+            {{ message }}
+        </div>
+    {% endfor %}
     <div class="container">
         <div class="row">
             <div class="col-md-12">
+                <a href={{path("")}}>Home</a>
                 <div class="title">
                     <h1>New Movie</h1>
                 </div>
@@ -14,9 +20,15 @@
             <div class="col-md-12">
                 {{ form_errors(form) }}
                 {{form_start(form)}}
-                    {{form_row(form.title)}}
-                    {{form_row(form.description)}}
-                    {{form_row(form.save)}}
+                <div class="col-md-4">
+                    {{form_row(form.title, { 'attr' : { 'class': 'form-control' } })}}
+                </div>
+                <div class="col-md-4">
+                    {{form_row(form.description, { 'attr' : { 'class': 'form-control' } })}}
+                </div>
+                <div class="col-md-2">
+                    {{form_row(form.save, { 'attr' : { 'class': 'btn btn-primary' } })}}
+                </div>
                 {{form_end(form)}}
             </div>
         </div>

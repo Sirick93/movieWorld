@@ -4,9 +4,85 @@ body {
 
 section#movies {
     margin-top: 50px;
+    margin-bottom: 50px;
 }
 
 .alert-box {
     display: none;
     border-radius: 20px;
+}
+
+button.btn, a.btn {
+    padding: 5px 10px 5px 10px;
+}
+
+button.btn.btn-primary, a.btn.btn-primary {
+    border: none;
+    background-color: #42316c;
+}
+
+button.btn.btn-secondary {
+    border: none;
+}
+
+.title {
+    color: #42316c;
+}
+
+.movie-create-btn {
+    margin-bottom: 20px;
+}
+
+.sort-btn {
+    width: 115px;
+    margin-bottom: 6px;
+}
+
+input#registration_form_agreeTerms {
+    margin-left: 5px;
+}
+
+.movie-title, .movie-stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.movie-title {
+    margin-bottom: 10px;
+}
+
+.movie-title h5, .movie-title p {
+    margin-bottom: 0px;
+}
+
+#like-btn {
+    color: rgb(115, 184, 115);
+}
+
+#hate-btn {
+    color: rgb(230, 69, 69);
+}
+
+.fa-thumbs-up {
+    color: rgb(48, 102, 48);
+}
+
+.fa-thumbs-down {
+    color: rgb(128, 57, 57);
+}
+
+.current, .page {
+    padding: 0px 6px;
+    background-color: #cfcfcf;
+    margin: 0px 2px;
+}
+
+.next {
+    margin-right: 5px;
+    margin-left: 10px;
+}
+
+#create_movie_save {
+    margin-top: 10px;
 }

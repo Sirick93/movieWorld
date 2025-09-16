@@ -14,14 +14,6 @@ use App\Repository\MovieRepository;
 
 final class VoteController extends AbstractController
 {
-    #[Route('/vote', name: 'app_vote')]
-    public function index(): Response
-    {
-        return $this->render('vote/index.html.twig', [
-            'controller_name' => 'VoteController',
-        ]);
-    }
-
     #[Route('/vote/new', name: 'add_vote', methods:["POST"])]
     public function create(
         Request $request,
@@ -54,7 +46,6 @@ final class VoteController extends AbstractController
                 return new JsonResponse(['error' => 'Cannot vote your own movie'], 403);
             }
             
-            // use your repository method (expects objects)
             $existingVote = $voteRepository->getUserMovieVote($movie, $user);
 
             if (!empty($existingVote)) {

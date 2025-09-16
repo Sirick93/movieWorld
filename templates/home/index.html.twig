@@ -1,20 +1,19 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello HomeController!{% endblock %}
+{% block title %}MovieWorld{% endblock %}
 
 {% block body %}
 <section id="movies">
-    <div class="alert-box">
-    </div>
     <div class="container">
         <div class="row">
+            <div class="alert-box col-md-12">
+            </div>
             <div class="col-md-8">
                 <div class="title">
                     <h1>Movie World</h1>
                 </div>
             </div>
             <div class="col-md-4">
-            
                 <div class="user-links">
                     {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                         Hello {{ app.user.name }}, <a href="{{ path('app_logout') }}">Logout</a>
@@ -31,14 +30,16 @@
             </div>
         </div>
         <div class="row">
+            <div class="col-md-12">
+                <div class="count">
+                    <p>Found {{ movies.getTotalItemCount }} movies</p>
+                </div>
+            </div>
             <div class="col-md-10">
                 <div class="movie-list">
-                    <div class="count">
-                       <p>Found {{ movies.getTotalItemCount }} movies</p>
-                    </div>
                     {% for row in movies %}
                         {% set movie = row[0] %}
-                        <div class="card mb-3">
+                        <div id="movie-{{movie.id}}" class="card mb-3">
                             <div class="card-body">
                                 <div class="movie-title">
                                     <h5>{{ movie.title }}</h5>
@@ -48,21 +49,23 @@
                                     <p>{{ movie.description }}</p>
                                 </div>
                                 <div class="movie-stats">
-                                    <p>
-                                        👍<span id="likes"> {{ row.likes|default(0) }}</span> | 👎<span id="hates"> {{ row.hates|default(0) }}</span>
-                                    </p>
-                                    <p> 
+                                    <div class="movie-rating">
+                                        <i class="fa-solid fa-thumbs-up"></i><span id="likes"> {{ row.likes|default(0) }}</span> | <i class="fa-solid fa-thumbs-down"></i><span id="hates"> {{ row.hates|default(0) }}</span>
+                                    </div>
+                                    <div class="rating-buttons">
                                         {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-                                            <a type="button" id="like-btn" class="btn btn-primary" data-value="1" data-movie="{{movie.id}}" data-token="{{ csrf_token(app.user.id) }}">Like</a>
+                                            <a type="button" id="like-btn" class="btn" data-value="1" data-movie="{{movie.id}}" data-token="{{ csrf_token(app.user.id) }}">Like</a>
                                             /
-                                            <a type="button" id="hate-btn" class="btn btn-primary" data-value="-1" data-movie="{{movie.id}}" data-token="{{ csrf_token(app.user.id) }}">Hate</a>
-                                            {% if movie.user.id == app.user.id %}
-                                                Posted by <a href="{{ path('', {'sort': 'm.createdAt', 'order': 'DESC', 'userId': app.user.id}) }}">You</a>
-                                            {% else %}
-                                                Posted by <a href="{{ path('', {'sort': 'm.createdAt', 'order': 'DESC', 'userId': movie.user.id}) }}">{{movie.user.name}}</a>
-                                            {% endif %}
+                                            <a type="button" id="hate-btn" class="btn" data-value="-1" data-movie="{{movie.id}}" data-token="{{ csrf_token(app.user.id) }}">Hate</a>
                                         {% endif %}
-                                    </p>
+                                    </div>
+                                    <div class="author">
+                                        {% if is_granted('IS_AUTHENTICATED_FULLY') and movie.user.id == app.user.id %}
+                                            Posted by <a href="{{ path('', {'sort': 'm.createdAt', 'order': 'DESC', 'userId': app.user.id}) }}">You</a>
+                                        {% else %}
+                                            Posted by <a href="{{ path('', {'sort': 'm.createdAt', 'order': 'DESC', 'userId': movie.user.id}) }}">{{movie.user.name}}</a>
+                                        {% endif %}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -75,13 +78,13 @@
             <div class="col-md-2">
                 {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                     <div class="movie-create-btn">
-                        <a href="{{path('add_movie')}}">New Movie</a>
+                        <a href="{{path('add_movie')}}" class="btn btn-primary">New Movie</a>
                     </div>
                 {% endif %}
                 <div class="sort-links">
-                    <a href="{{ path('', {'sort': 'likes', 'order': 'DESC'}) }}" class="btn btn-sm btn-outline-primary">Sort by Likes</a>
-                    <a href="{{ path('', {'sort': 'hates', 'order': 'DESC'}) }}" class="btn btn-sm btn-outline-danger">Sort by Hates</a>
-                    <a href="{{ path('', {'sort': 'm.createdAt', 'order': 'DESC'}) }}" class="btn btn-sm btn-outline-secondary">Sort by Date</a>
+                    <a href="{{ path('', {'sort': 'likes', 'order': 'DESC'}) }}" class="sort-btn btn btn-sm btn-outline-primary">Sort by Likes</a>
+                    <a href="{{ path('', {'sort': 'hates', 'order': 'DESC'}) }}" class="sort-btn btn btn-sm btn-outline-danger">Sort by Hates</a>
+                    <a href="{{ path('', {'sort': 'm.createdAt', 'order': 'DESC'}) }}" class="sort-btn btn btn-sm btn-outline-secondary">Sort by Date</a>
                 </div>
             </div>
         </div>
@@ -107,8 +110,6 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        
-            
             <label for="username">Email</label>
             <input type="email" value="{{ last_username }}" name="_username" id="username" class="form-control" autocomplete="email" required autofocus>
             <label for="password">Password</label>
@@ -124,13 +125,10 @@
                     <label for="_remember_me">Remember me</label>
                 </div>
             #}
-
-            
-        
       </div>
       <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button class="btn btn-lg btn-primary" type="submit">
+            <button class="btn btn-primary" type="submit">
                     Sign in
             </button>
       </div>
@@ -150,16 +148,17 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-            {{ form_row(registrationForm.email) }}
-            {{ form_row(registrationForm.name) }}
+            {{ form_row(registrationForm.email, { 'attr' : { 'class': 'form-control' } } ) }}
+            {{ form_row(registrationForm.name, { 'attr' : { 'class': 'form-control' } }) }}
             {{ form_row(registrationForm.plainPassword, {
-                label: 'Password'
+                label: 'Password',
+                'attr' : { 'class': 'form-control' }
             }) }}
-            {{ form_row(registrationForm.agreeTerms) }}
+            {{ form_row(registrationForm.agreeTerms, { 'attr' : { 'class': 'form-check-input' } }) }}
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            {{ form_row(registrationForm.sign_up) }}
+            {{ form_row(registrationForm.sign_up, { 'attr' : { 'class': 'btn btn-primary' } }) }}
         </div>
         {{ form_end(registrationForm) }}
     </div>

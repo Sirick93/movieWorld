@@ -31,13 +31,20 @@ final class MovieController extends AbstractController
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted()) {
+        if ($form->isSubmitted() && $form->isValid()) {
 
             $movie->setUser($this->getUser());
             
             $manager->persist($movie);
 
             $manager->flush();
+
+            $this->addFlash(
+                'notice',
+                'Your movie was added!'
+            );
+
+            return $this->redirect($request->getUri());
         }
 
         return $this->render('movie/create.html.twig', [
