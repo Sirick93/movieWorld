@@ -4,14 +4,14 @@
 
 {% block body %}
 <section id="movies">
-    {% for message in app.flashes('notice') %}
-        <div class="flash-notice">
-            {{ message }}
-        </div>
-    {% endfor %}
     <div class="container">
         <div class="row">
             <div class="col-md-12">
+            {% for message in app.flashes('notice') %}
+                <div class="flash-notice">
+                    {{ message }}
+                </div>
+            {% endfor %}
                 <a href={{path("")}}>Home</a>
                 <div class="title">
                     <h1>New Movie</h1>

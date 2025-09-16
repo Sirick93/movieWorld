@@ -54,6 +54,7 @@ final class VoteController extends AbstractController
                     $em->remove($existingVote);
                     $em->flush();
                     $action = 'retracted';
+                    $value = 0;
                 } else {
                     // change vote
                     $existingVote->setValue($value);
@@ -75,6 +76,7 @@ final class VoteController extends AbstractController
             return new JsonResponse([
                 'status' => 'ok',
                 'action' => $action,
+                'value' => $value,
                 'likes' => $counts['likes'],
                 'hates' => $counts['hates'],
             ]);

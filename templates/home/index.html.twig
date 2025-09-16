@@ -35,7 +35,19 @@
                     <p>Found {{ movies.getTotalItemCount }} movies</p>
                 </div>
             </div>
-            <div class="col-md-10">
+            <div class="desktop-hidden col-md-12">
+                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                    <div class="movie-create-btn">
+                        <a href="{{path('add_movie')}}" class="btn btn-primary">New Movie</a>
+                    </div>
+                {% endif %}
+                <div class="sort-links">
+                    <a href="{{ path('', {'sort': 'likes', 'order': 'DESC'}) }}" class="sort-btn btn btn-sm btn-outline-primary">Sort by Likes</a>
+                    <a href="{{ path('', {'sort': 'hates', 'order': 'DESC'}) }}" class="sort-btn btn btn-sm btn-outline-danger">Sort by Hates</a>
+                    <a href="{{ path('', {'sort': 'm.createdAt', 'order': 'DESC'}) }}" class="sort-btn btn btn-sm btn-outline-secondary">Sort by Date</a>
+                </div>
+            </div>
+            <div class="col-md-12 col-lg-10">
                 <div class="movie-list">
                     {% for row in movies %}
                         {% set movie = row[0] %}
@@ -54,9 +66,9 @@
                                     </div>
                                     <div class="rating-buttons">
                                         {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-                                            <a type="button" id="like-btn" class="btn" data-value="1" data-movie="{{movie.id}}" data-token="{{ csrf_token(app.user.id) }}">Like</a>
+                                            <a type="button" id="like-btn" class="btn {{row.userVote == 1 ? 'active' : ''}}" data-value="1" data-movie="{{movie.id}}" data-token="{{ csrf_token(app.user.id) }}">Like</a>
                                             /
-                                            <a type="button" id="hate-btn" class="btn" data-value="-1" data-movie="{{movie.id}}" data-token="{{ csrf_token(app.user.id) }}">Hate</a>
+                                            <a type="button" id="hate-btn" class="btn {{row.userVote == -1 ? 'active' : ''}}" data-value="-1" data-movie="{{movie.id}}" data-token="{{ csrf_token(app.user.id) }}">Hate</a>
                                         {% endif %}
                                     </div>
                                     <div class="author">
@@ -75,7 +87,7 @@
                     {{ knp_pagination_render(movies) }}
                 </div>
             </div>
-            <div class="col-md-2">
+            <div class="mobile-hidden col-md-2">
                 {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                     <div class="movie-create-btn">
                         <a href="{{path('add_movie')}}" class="btn btn-primary">New Movie</a>

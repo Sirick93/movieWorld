@@ -33,12 +33,19 @@ class MovieRepository extends ServiceEntityRepository
             ->groupBy('m.id');
 
         if ($userId) {
-            $qb->andWhere('m.user = :user')
-            ->setParameter('user', $userId);
+            // join with votes of the current user
+            $qb->leftJoin(
+                'm.votes',
+                'uv',
+                'WITH',
+                'uv.user = :currentUser'
+            )
+            ->addSelect('uv.value AS userVote')
+            ->setParameter('currentUser', $userId);
         }
 
         // Validate sorting field
-        $allowedFields = ['createdAt', 'likes', 'hates'];
+        $allowedFields = ['createdAt', 'likes', 'hates', 'user'];
         if (!in_array($sortField, $allowedFields)) {
             $sortField = 'createdAt';
         }

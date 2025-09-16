@@ -40,6 +40,19 @@ const initialize = () => {
             //console.log(data);
             $('#movie-'+movie+' #likes').text(data.likes);
             $('#movie-'+movie+' #hates').text(data.hates);
+            if (data.value == 1) {
+                $('#movie-'+movie+' #hate-btn').removeClass('active');
+                $('#movie-'+movie+' #like-btn').addClass('active');
+            }
+            if (data.value == 0) {
+                $('#movie-'+movie+' #like-btn').removeClass('active');
+                $('#movie-'+movie+' #hate-btn').removeClass('active');
+            }
+            if (data.value == -1) {
+                $('#movie-'+movie+' #like-btn').removeClass('active');
+                $('#movie-'+movie+' #hate-btn').addClass('active');
+            }
+            
             $('.alert-box').show();
             $('.alert-box').html('<div class="alert alert-primary">Movie rating '+data.action+'</div>');
             setTimeout(function() {

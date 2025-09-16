@@ -2,6 +2,16 @@ body {
     background-color: rgb(245, 245, 245) !important;
 }
 
+.desktop-hidden {
+    display: none;
+}
+
+.flash-notice {
+    background-color: lightgrey;
+    padding: 15px;
+    border-radius: 15px;
+}
+
 section#movies {
     margin-top: 50px;
     margin-bottom: 50px;
@@ -64,6 +74,16 @@ input#registration_form_agreeTerms {
     color: rgb(230, 69, 69);
 }
 
+#like-btn.active {
+    background-color: rgb(91, 148, 91);
+    color: white;
+}
+
+#hate-btn.active {
+    background-color: rgb(182, 54, 54);
+    color: white;
+}
+
 .fa-thumbs-up {
     color: rgb(48, 102, 48);
 }
@@ -85,4 +105,14 @@ input#registration_form_agreeTerms {
 
 #create_movie_save {
     margin-top: 10px;
+}
+
+@media only screen and (max-width: 992px) {
+    .mobile-hidden {
+        display: none;
+    }
+
+    .desktop-hidden {
+        display: block;
+    }
 }
